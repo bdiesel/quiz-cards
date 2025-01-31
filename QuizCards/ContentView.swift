@@ -16,8 +16,10 @@ extension View {
 
 struct ContentView: View {
     @Environment(\.accessibilityDifferentiateWithoutColor) var accessibilityDifferentiateWithoutColor
-
     @State private var cards = Array<Card>(repeating: .example, count: 10)
+    @State private var timeRemaining = 100
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
     
     var body: some View {
         ZStack {
@@ -25,6 +27,13 @@ struct ContentView: View {
                 .resizable()
                 .edgesIgnoringSafeArea(.all)
             VStack {
+                Text ("Time Remaining: \(timeRemaining)")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(Color.black.opacity(0.75))
+                    .clipShape(.capsule)
                 ZStack {
                     ForEach(0..<cards.count, id: \.self) { index in
                         CardView(card: self.cards[index]) {
@@ -57,6 +66,11 @@ struct ContentView: View {
                     .padding()
                 }
             }
+        }.onReceive(timer){ time in
+            if timeRemaining > 0 {
+                timeRemaining -= 1
+            }
+            
         }
     }
     
